@@ -1,6 +1,7 @@
 pipeline {
     agent any 
     environment {
+        // Reference to Jenkins credentials (must exist in Jenkins → Credentials with ID = test1)
         DOCKERHUB_CREDENTIALS = credentials('test1')
     }
     stages {
@@ -10,15 +11,17 @@ pipeline {
                 sh 'docker build -t nive015/jenkins-demo:$BUILD_NUMBER .'
             }
         }
-        stage('login to dockerhub') {
+        stage('Login to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'test1', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                     echo "Logging in to Docker Hub..."
-                    sh "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
+                    sh """
+                        echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                    """
                 }
             }
         }
-        stage('push image') {
+        stage('Push image') {
             steps {
                 echo "Pushing Docker image to Docker Hub..."
                 sh 'docker push nive015/jenkins-demo:$BUILD_NUMBER'
@@ -26,6 +29,7 @@ pipeline {
         }
         stage('Deploy to Staging') {
             steps {
+                echo "Deploying container..."
                 // Pull the latest image from Docker Hub
                 sh 'docker pull nive015/jenkins-demo:$BUILD_NUMBER'
 
