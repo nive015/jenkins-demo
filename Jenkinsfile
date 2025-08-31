@@ -7,7 +7,7 @@ pipeline {
         stage('Build docker image') {
             steps {  
                 echo "Building Docker image..."
-                sh 'docker build -t nayan6244/flaskapp:$BUILD_NUMBER .'
+                sh 'docker build -t nive015/flaskapp:$BUILD_NUMBER .'
             }
         }
         stage('login to dockerhub') {
