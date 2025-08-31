@@ -27,7 +27,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 // Pull the latest image from Docker Hub
-                sh 'docker pull nayan6244/flaskapp:$BUILD_NUMBER'
+                sh 'docker pull nive015/jenkins-demo:$BUILD_NUMBER'
 
                 // Stop and remove any existing containers
                 sh 'docker stop myapp-container || true'
